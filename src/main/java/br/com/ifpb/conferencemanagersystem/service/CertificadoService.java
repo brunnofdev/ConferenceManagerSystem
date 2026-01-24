@@ -1,47 +1,77 @@
 package br.com.ifpb.conferencemanagersystem.service;
 
-import br.com.ifpb.conferencemanagersystem.model.Atividade;
+import br.com.ifpb.conferencemanagersystem.model.Certificado;
+import br.com.ifpb.conferencemanagersystem.model.Evento;
 import br.com.ifpb.conferencemanagersystem.model.Participante;
+import br.com.ifpb.conferencemanagersystem.repository.CertificadoRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.time.format.DateTimeFormatter;
 
 @Service
+@RequiredArgsConstructor
 public class CertificadoService {
 
-    public ByteArrayInputStream gerarCertificadoPdf(Participante participante, Atividade atividade) {
-        Document document = new Document();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private final CertificadoRepository certificateRepository;
+    private final EventoService eventService;
+    private final ParticipanteService participantService;
 
-        try {
+    public byte[] generateCertificatePdf(Long eventId, Long participantId) {
+        // Busca dados
+        Evento event = eventService.findById(eventId);
+        Participante participant = participantService.findById(participantId);
+
+        // Cria o registro do certificado no banco (Persistência)
+        Certificado certificate = new Certificado(participant, event);
+        certificateRepository.save(certificate);
+
+        // Gera o PDF em memória (Lógica do OpenPDF)
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Document document = new Document(PageSize.A4.rotate()); // Formato Paisagem
             PdfWriter.getInstance(document, out);
+
             document.open();
 
-            // Adiciona Logotipo, Fontes, Bordas (Lógica visual aqui)
-            Font fonteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20);
-            Paragraph titulo = new Paragraph("CERTIFICADO DE PARTICIPAÇÃO", fonteTitulo);
-            titulo.setAlignment(Element.ALIGN_CENTER);
-            document.add(titulo);
+            // --- Design do Certificado ---
+            // Fonte Padrão
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 30);
+            Font textFont = FontFactory.getFont(FontFactory.HELVETICA, 18);
 
-            document.add(new Paragraph(" ")); // Pular linha
+            // Título
+            Paragraph title = new Paragraph("CERTIFICADO DE PARTICIPAÇÃO", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingAfter(50);
+            document.add(title);
 
-            String texto = "Certificamos que " + participante.getNome() +
-                    " participou da atividade " + atividade.getTema() +
-                    " com carga horária de " + atividade.getCargaHoraria() + " horas.";
+            // Corpo do Texto
+            String text = String.format(
+                    "Certificamos que \n\n%s\n\n participou do evento \"%s\", realizado em %s.\n\n" +
+                            "Carga Horária: XX horas",
+                    participant.getName().toUpperCase(),
+                    event.getName(),
+                    event.getStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            );
 
-            Paragraph corpo = new Paragraph(texto);
-            corpo.setAlignment(Element.ALIGN_JUSTIFIED);
-            document.add(corpo);
+            Paragraph body = new Paragraph(text, textFont);
+            body.setAlignment(Element.ALIGN_CENTER);
+            body.setSpacingAfter(50);
+            document.add(body);
+
+            // Código de Validação (UUID)
+            Paragraph validation = new Paragraph("Código de Validação: " + certificate.getValidationCode(),
+                    FontFactory.getFont(FontFactory.COURIER, 12));
+            validation.setAlignment(Element.ALIGN_CENTER);
+            document.add(validation);
 
             document.close();
 
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
+            return out.toByteArray(); // Retorna o arquivo binário
 
-        return new ByteArrayInputStream(out.toByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar PDF do certificado", e);
+        }
     }
 }
