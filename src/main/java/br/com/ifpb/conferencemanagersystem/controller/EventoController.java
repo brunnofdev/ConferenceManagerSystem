@@ -26,7 +26,7 @@ public class EventoController {
         return "event/form";
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public String saveEvent(@ModelAttribute Evento event) {
         service.save(event);
         return "redirect:/events";

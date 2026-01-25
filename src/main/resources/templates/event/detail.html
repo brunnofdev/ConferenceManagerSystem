@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: cabecalho}"></head>
+<body>
+<nav th:replace="~{layout :: menu}"></nav>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3>Detalhes do Evento</h3>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title" th:text="${event.name}">Nome do Evento</h5>
+            <h6 class="card-subtitle mb-2 text-muted" th:text="${event.location}">Local</h6>
+
+            <p class="card-text mt-3">
+                <strong>Descrição:</strong><br>
+                <span th:text="${event.description}">Descrição aqui</span>
+            </p>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <strong>Início:</strong> <span th:text="${event.startDate}">Data</span>
+                </li>
+                <li class="list-group-item">
+                    <strong>Término:</strong> <span th:text="${event.endDate}">Data</span>
+                </li>
+            </ul>
+
+            <div class="mt-3">
+                <a href="/events" class="btn btn-secondary">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: rodape}"></footer>
+</body>
+</html>

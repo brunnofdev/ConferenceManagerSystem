@@ -1,63 +1,31 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabecalho">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGE - Sistema de Gestão de Eventos</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conference Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        body { padding-top: 60px; } /* Espaço para a navbar fixa */
-        .footer { margin-top: 50px; padding: 20px 0; background-color: #f8f9fa; text-align: center; }
-    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">SGE Academic</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/events}">Eventos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/participants}">Participantes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/certificates/issue}">Certificados</a>
-                </li>
+<nav th:fragment="menu" class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/">CMS Eventos</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/events">Eventos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/participantes">Participantes</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container mt-4">
-
-    <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${message}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<footer th:fragment="rodape" class="bg-light text-center text-lg-start mt-5 p-3">
+    <div class="text-center text-muted">
+        © 2026 Copyright: Conference Manager System
     </div>
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <div th:replace="${content}"></div>
-
-</div>
-
-<footer class="footer">
-    <div class="container">
-        <span class="text-muted">Trabalho Acadêmico - Gestão de Eventos (PMBOK & Scrum) &copy; 2026</span>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
