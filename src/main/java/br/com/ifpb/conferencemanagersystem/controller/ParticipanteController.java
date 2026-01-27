@@ -27,7 +27,7 @@ public class ParticipanteController {
         return "participant/form";
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public String saveParticipant(@ModelAttribute Participante participant, RedirectAttributes redirectAttributes) {
         try {
             service.save(participant);

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: cabecalho}"></head>
+<body>
+<nav th:replace="~{layout :: menu}"></nav>
+
+<div class="container mt-4">
+    <h2>Cadastro de Participante</h2>
+    <hr>
+
+    <form th:action="@{/participants/save}" th:object="${participant}" method="post">
+        <div class="mb-3">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" class="form-control" th:field="*{name}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" th:field="*{email}" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a href="/participants" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<footer th:replace="~{layout :: rodape}"></footer>
+</body>
+</html>

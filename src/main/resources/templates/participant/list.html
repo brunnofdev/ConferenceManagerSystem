@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: cabecalho}"></head>
+<body>
+<nav th:replace="~{layout :: menu}"></nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Participantes Inscritos</h2>
+        <a href="/participants/new" class="btn btn-primary">Novo Participante</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${participants}">
+                    <td th:text="${p.id}">1</td>
+                    <td th:text="${p.name}">João</td>
+                    <td th:text="${p.email}">joao@email.com</td>
+                    <td>
+                        <!--<a href="#" class="btn btn-sm btn-warning text-dark">
+                            🎓 Emitir Certificado
+                        </a>-->
+                        <a th:href="@{/participants/delete/{id}(id=${p.id})}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Excluir participante?')">🗑️</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(participants)}">
+                    <td colspan="4" class="text-center">Nenhum participante cadastrado.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout :: rodape}"></footer>
+</body>
+</html>
