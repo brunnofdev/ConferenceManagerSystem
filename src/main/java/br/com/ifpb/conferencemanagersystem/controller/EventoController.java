@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/events")
@@ -27,9 +28,16 @@ public class EventoController {
     }
 
     @PostMapping("/save")
-    public String saveEvent(@ModelAttribute Evento event) {
-        service.save(event);
-        return "redirect:/events";
+    public String saveEvent(@ModelAttribute Evento event, RedirectAttributes redirectAttributes) {
+        try {
+            service.save(event);
+            redirectAttributes.addFlashAttribute("success", "Evento salvo com sucesso!");
+            return "redirect:/events";
+        } catch (IllegalArgumentException e) {
+            // Se der erro de data, volta para o formulário e mostra o erro
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/events/new";
+        }
     }
 
     // Ver um evento específico e suas atividades
@@ -38,5 +46,23 @@ public class EventoController {
         Evento event = service.findById(id);
         model.addAttribute("event", event);
         return "event/detail"; // Página de detalhes
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteEvent(@PathVariable Long id) {
+        service.delete(id);
+        return "redirect:/events";
+    }
+
+    @PostMapping("/{id}/inscrever")
+    public String inscriber(@PathVariable Long id, @RequestParam String email, RedirectAttributes redirectAttributes) {
+        try {
+            service.inscreverParticipante(id, email);
+            redirectAttributes.addFlashAttribute("success", "Inscrição realizada!");
+        } catch (IllegalArgumentException e) {
+            // Captura o "Participante não encontrado" e mostra na tela
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/events/" + id;
     }
 }

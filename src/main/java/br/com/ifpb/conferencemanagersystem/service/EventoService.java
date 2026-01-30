@@ -2,7 +2,10 @@ package br.com.ifpb.conferencemanagersystem.service;
 
 import br.com.ifpb.conferencemanagersystem.model.Atividade;
 import br.com.ifpb.conferencemanagersystem.model.Evento;
+import br.com.ifpb.conferencemanagersystem.model.Participante;
 import br.com.ifpb.conferencemanagersystem.repository.EventoRepository;
+import br.com.ifpb.conferencemanagersystem.repository.ParticipanteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +14,9 @@ import java.util.List;
 public class EventoService {
 
     private final EventoRepository repository;
+
+    @Autowired
+    private ParticipanteRepository participanteRepository;
 
     public EventoService(EventoRepository repository) {
         this.repository = repository;
@@ -43,5 +49,21 @@ public class EventoService {
         event.getSchedule().add(activity);
 
         repository.save(event); // Atualiza o evento e salva a nova atividade
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+
+    public void inscreverParticipante(Long eventoId, String emailParticipante) {
+        Evento evento = findById(eventoId);
+        Participante participante = participanteRepository.findByEmail(emailParticipante);
+
+        if (participante != null) {
+            evento.getParticipantesInscritos().add(participante);
+            repository.save(evento); // O JPA salva a ligação na tabela do meio
+        } else {
+            throw new IllegalArgumentException("Participante não encontrado!");
+        }
     }
 }
