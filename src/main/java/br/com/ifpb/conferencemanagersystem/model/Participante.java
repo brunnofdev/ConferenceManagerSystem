@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,4 +25,7 @@ public class Participante {
     private String email;
 
     private String institution;
+
+    @ManyToMany(mappedBy = "participantesInscritos")
+    private List<Evento> events;
 }

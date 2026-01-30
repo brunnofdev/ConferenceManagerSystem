@@ -25,8 +25,15 @@ public class Evento {
     private LocalDate endDate;
     private String location;
 
-    // Relacionamento: Um evento tem várias atividades
     // cascade = ALL: Se eu deletar o evento, apaga as atividades junto (limpeza automática)
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Atividade> schedule;
+
+    @ManyToMany
+    @JoinTable(
+            name = "event_participants",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "participant_id")
+    )
+    private List<Participante> participantesInscritos;
 }
